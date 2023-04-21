@@ -1,0 +1,51 @@
+.registerFormContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.formContainer {
+  width: 300px;
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
+.formTitle {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.formField {
+  margin-bottom: 1rem;
+}
+
+.formActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.formActions button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.formActions button:hover {
+  background-color: #0056b3;
+}
+
+.formActions a {
+  color: #007bff;
+  text-decoration: none;
+  margin-top: 0.5rem;
+}
+
+.formField:focus-within {
+  outline: 2px solid #007bff;
+}
