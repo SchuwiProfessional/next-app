@@ -31,6 +31,12 @@ export default function NavigationPage() {
           <li className="hover:text-gray-900">
             <Link href="/notification">Notificaciones</Link>
           </li>
+          <li className="hover:text-gray-900">
+            <Link href="/login">Iniciar Sesión</Link>
+          </li>
+          <li className="hover:text-gray-900">
+            <Link href="/register" >Registrar</Link>
+          </li>
         </ul>
       </nav>
     </header>
