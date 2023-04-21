@@ -1,4 +1,5 @@
 import Navegation from "../components/Navegation"
+import '../styles/globals.css'
 
 export const metadata = {
   title: 'Next.js',
