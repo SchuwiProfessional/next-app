@@ -13,9 +13,8 @@ export default function ProductsPage() {
   const [productBrand, setProductBrand] = useState("");
   const [productImage, setProductImage] = useState("");
   const [productStock, setProductStock] = useState("");
-  const [formCompleted, setFormCompleted] = useState(false);
-
   const [products, setProducts] = useState([]);
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -52,6 +51,8 @@ export default function ProductsPage() {
       .catch((error) => {
         console.error;
       });
+
+    setIsFormVisible(false);
   };
 
   const handleDeleteProduct = (uuid) => {
@@ -73,6 +74,12 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto px-4">
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+        onClick={() => setIsFormVisible(true)}
+      >
+        Agregar Producto
+      </button>
       <div className="bg-white min-h-screen flex w-3/4">
         <div className="w-full">
           <div className="flex flex-wrap -mx-4">
@@ -119,10 +126,7 @@ export default function ProductsPage() {
                       >
                         Eliminar
                       </button>
-                      <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32 h-10"
-                        onClick={() => handleEditProduct(product.uuid)}
-                      >
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-32 h-10">
                         Editar
                       </button>
                     </div>
@@ -132,146 +136,149 @@ export default function ProductsPage() {
             ))}
           </div>
         </div>
-        <div className="fixed inset-y-0 right-0 w-1/4 bg-white p-4 z-10 mt-8">
-          {/* add product form */}
-          <h2 className="text-gray-900 font-bold text-lg mb-2">
-            Agregar Producto
-          </h2>
 
-          <form onSubmit={handleAddProduct}>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="name"
-              >
-                Nombre
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
-                type="text"
-                placeholder="Nombre del producto"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="description"
-              >
-                Descripción
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="description"
-                placeholder="Descripción del producto"
-                value={productDescription}
-                onChange={(e) => setProductDescription(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="category"
-                type="text"
-              >
-                Categoría
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="category"
-                type="text"
-                placeholder="Categoría del producto"
-                value={productCategory}
-                onChange={(e) => setProductCategory(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="brand"
-              >
-                Marca
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="brand"
-                type="text"
-                placeholder="Marca del producto"
-                value={productBrand}
-                onChange={(e) => setProductBrand(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="stock"
-                type="number"
-              >
-                Cantidad en Stock
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="stock"
-                type="number"
-                placeholder="Cantidad en stock del producto"
-                value={productStock}
-                onChange={(e) => setProductStock(e.target.value)}
-                required
-              />
-            </div>
-            {/* image */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="image"
-              >
-                Imagen
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="image"
-                type="text"
-                placeholder="Imagen del producto"
-                value={productImage}
-                onChange={(e) => setProductImage(e.target.value)}
-                required
-              />
-            </div>
-            {/* price */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="price"
-                type="number"
-                required
-              >
-                Precio
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="price"
-                type="number"
-                placeholder="Precio del producto"
-                value={productPrice}
-                onChange={(e) => setProductPrice(e.target.value)}
-                required
-              />
-            </div>
-            {/* button */}
-            <div className="flex items-center justify-between">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
-                type="submit"
-                onClick={handleAddProduct}
-              >
-                Agregar
-              </button>
-            </div>
-          </form>
-        </div>
+        {isFormVisible && (
+          <div className="fixed inset-y-0 right-0 w-1/4 bg-white p-4 z-10 mt-8">
+            {/* add/edit product form */}
+
+            <form className="form-container">
+              <h2 className="text-gray-900 font-bold text-lg mb-2">
+                Agregar Producto
+              </h2>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="name"
+                >
+                  Nombre
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="name"
+                  type="text"
+                  placeholder="Nombre del producto"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="description"
+                >
+                  Descripción
+                </label>
+                <textarea
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="description"
+                  placeholder="Descripción del producto"
+                  value={productDescription}
+                  onChange={(e) => setProductDescription(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="category"
+                  type="text"
+                >
+                  Categoría
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="category"
+                  type="text"
+                  placeholder="Categoría del producto"
+                  value={productCategory}
+                  onChange={(e) => setProductCategory(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="brand"
+                >
+                  Marca
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="brand"
+                  type="text"
+                  placeholder="Marca del producto"
+                  value={productBrand}
+                  onChange={(e) => setProductBrand(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="stock"
+                  type="number"
+                >
+                  Cantidad en Stock
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="stock"
+                  type="number"
+                  placeholder="Cantidad en stock del producto"
+                  value={productStock}
+                  onChange={(e) => setProductStock(e.target.value)}
+                  required
+                />
+              </div>
+              {/* image */}
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="image"
+                >
+                  Imagen
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="image"
+                  type="text"
+                  placeholder="Imagen del producto"
+                  value={productImage}
+                  onChange={(e) => setProductImage(e.target.value)}
+                  required
+                />
+              </div>
+              {/* price */}
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="price"
+                  type="number"
+                  required
+                >
+                  Precio
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="price"
+                  type="number"
+                  placeholder="Precio del producto"
+                  value={productPrice}
+                  onChange={(e) => setProductPrice(e.target.value)}
+                  required
+                />
+              </div>
+              {/* button */}
+              <div className="flex items-center justify-between">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                  type="submit"
+                  onClick={handleAddProduct}
+                >
+                  Agregar
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );
