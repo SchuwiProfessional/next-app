@@ -80,6 +80,7 @@ export default function ProductsPage() {
       >
         Agregar Producto
       </button>
+
       <div className="bg-white min-h-screen flex w-3/4">
         <div className="w-full">
           <div className="flex flex-wrap -mx-4">
@@ -145,6 +146,16 @@ export default function ProductsPage() {
               <h2 className="text-gray-900 font-bold text-lg mb-2">
                 Agregar Producto
               </h2>
+              {/* EXIT */}
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline closeButton"
+                onClick={() => setIsFormVisible(false)}
+              >
+                X
+              </button>
+
+              {/* NAME */}
+
               <div className="mb-4">
                 <label
                   className="block text-gray-700 font-bold mb-2"
