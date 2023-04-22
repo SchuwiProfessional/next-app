@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import styles from "../register/register.module.css"
 
 export default function RegisterPage() {
-    const [nombre, setNombre] = useState("");
-    const [apellidos, setApellidos] = useState("");
+    const [name, setName] = useState("");
+    const [lastname, setLastname] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,12 +15,12 @@ export default function RegisterPage() {
     // Manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch("http://localhost:3000/user/register", {
+        const response = await fetch("http://localhost:3002/user ", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ nombre, apellidos, email, password, confirmPassword, rol }),
+            body: JSON.stringify({ name, lastname, email, password, confirmPassword, rol }),
         });
         if (response.ok) {
             const data = await response.json();
@@ -36,25 +36,25 @@ export default function RegisterPage() {
                     <h2 className={styles.formTitle}>Formulario de Registro</h2>
                     <form onSubmit={handleSubmit}>
                         <div className={styles.formField}>
-                            <label htmlFor="nombre">Nombres:</label>
+                            <label htmlFor="name">Nombres:</label>
                             <input
-                                type="text"
-                                id="nombre"
-                                name="nombre"
+                                type="name"
+                                id="name"
+                                name="name"
                                 required
-                                value={nombre}
-                                onChange={(e) => setNombre(e.target.value)}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
                         </div>
                         <div className={styles.formField}>
-                            <label htmlFor="apellidos">Apellidos:</label>
+                            <label htmlFor="lastname">Apellidos:</label>
                             <input
-                                type="text"
-                                id="apellidos"
-                                name="apellidos"
+                                type="lastname"
+                                id="lastname"
+                                name="lastname"
                                 required
-                                value={apellidos}
-                                onChange={(e) => setApellidos(e.target.value)}
+                                value={lastname}
+                                onChange={(e) => setLastname(e.target.value)}
                             />
                         </div>
                         <div className={styles.formField}>
@@ -72,8 +72,8 @@ export default function RegisterPage() {
                             <label htmlFor="contraseña">Contraseña:</label>
                             <input
                                 type="password"
-                                id="contraseña"
-                                name="contraseña"
+                                id="password"
+                                name="password"
                                 minLength={6}
                                 required
                                 value={password}
@@ -81,11 +81,11 @@ export default function RegisterPage() {
                             />
                         </div>
                         <div className={styles.formField}>
-                            <label htmlFor="confirmar-contraseña">Confirmar contraseña:</label>
+                            <label htmlFor="confirmPassword">Confirmar contraseña:</label>
                             <input
-                                type="password"
-                                id="confirmar-contraseña"
-                                name="confirmar-contraseña"
+                                type="confirmPassword"
+                                id="confirmPassword"
+                                name="confirmPassword"
                                 minLength={6}
                                 required
                                 value={confirmPassword}
