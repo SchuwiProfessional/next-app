@@ -1,16 +1,38 @@
 .header {
     border: 1px solid #f0f0f0;
     border-radius: 4px;
-    padding: 4px;
-}
-
-.navegation {
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .navegation {
     display: flex;
     list-style: none;
     gap: 32px;
-}
-
-.navegation a:hover {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navegation li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .navegation li a:hover {
+    background-color: #333;
     color: #f0f0f0;
-    text-decoration: underline;
-}
+  }
+  

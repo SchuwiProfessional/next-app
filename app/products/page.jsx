@@ -80,62 +80,47 @@ export default function ProductsPage() {
       >
         Agregar Producto
       </button>
-
-      <div className="bg-white min-h-screen flex w-3/4">
-        <div className="w-full">
-          <div className="flex flex-wrap -mx-4">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="w-full md:w-1/2 lg:w-1/3 px-4 py-4"
-              >
-                <div className="border hover:shadow-lg rounded-lg overflow-hidden flex flex-col justify-between h-full">
-                  <img
-                    className="w-full h-48 object-cover"
-                    src={product.image}
-                    alt={product.name}
-                  />
-                  <div className="px-6 py-4 flex-grow">
-                    <h2 className="text-gray-900 font-bold text-2xl mb-2">
-                      {product.name}
-                    </h2>
-                    <p className="text-gray-600 text-sm">
-                      {product.description}
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      Category: {product.category}
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      Brand: {product.brand}
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      Stock: {product.stock}
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      Uuid: {product.uuid}
-                    </p>
-                    <div className="px-3 py-4 flex justify-between items-center">
-                      <span className="text-gray-700 font-bold">
-                        ${product.price}
-                      </span>
-                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-32 h-10">
-                        Agregar al carrito
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProduct(product.uuid)}
-                        className="w-32 h-10"
-                      >
-                        Eliminar
-                      </button>
-                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-32 h-10">
-                        Editar
-                      </button>
-                    </div>
+      <div className="bg-white min-h-screen px-4 py-8">
+        <div className="flex flex-wrap -mx-4">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 px-4 mb-8"
+            >
+              <div className="border hover:shadow-lg rounded-lg overflow-hidden">
+                <img
+                  className="w-full h-48 object-cover"
+                  src={product.image}
+                  alt={product.name}
+                />
+                <div className="px-4 py-2">
+                  <h2 className="text-gray-900 font-bold text-lg mb-2">
+                    {product.name}
+                  </h2>
+                  <p className="text-gray-600 text-sm mb-2">
+                    {product.description}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-2">
+                    Category: {product.category}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-2">
+                    Brand: {product.brand}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Stock: {product.stock}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 font-bold">
+                      ${product.price}
+                    </span>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                      Agregar al carrito
+                    </button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
         {isFormVisible && (
