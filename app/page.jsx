@@ -1,28 +1,105 @@
-import React from "react";
+"use client"; // this is a client component 👈🏽
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function IndexPage() {
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Enviar credenciales al servidor para autenticar al usuario
+    const response = await fetch("http://localhost:3002/user/login ", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.ok) {
+      const { token } = await response.json();
+
+      // Almacenar el token de autenticación en localStorage
+      localStorage.setItem("token", token);
+
+      // Redirigir al usuario a la página de productos
+      router.push("/products");
+    } else {
+      // Si la autenticación falla, mostrar un mensaje de error
+      setError("Credenciales inválidas. Por favor, inténtalo de nuevo.");
+    }
+  };
+
   return (
-    <div className="index-page-body flex flex-col items-center justify-center bg-cover bg-center">
-      <div className="flex flex-col items-center justify-center h-screen bg-white-100">
-        <div className="lg:text-center flex flex-wrap items-center justify-center">
-          <div className="w-full md:w-1/2 lg:w-1/3 text-center lg:text-left">
-            <h1 className="text-3xl tracking-tight font-extrabold text-gray-900 sm:text-4xl md:text-5xl">
-              <span className="block xl:inline text-black-20">LA CASA EL FRENO HUANCAYO E.I.R.L <b></b></span>
-              <span className="block xl:inline text-orange-500">
-                FRENOSA
-              </span>
-            </h1>
-            <p className="mt-3 max-w-md mx-auto lg:mx-0 text-base text-black-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-              Tenemos Venta y Reparacion de sistema de frenos y embrague en general.
-            </p>
-          </div>
-          <div className="w-full md:w-1/2 lg:w-2/3 lg:ml-8">
-            <a href="">
-              <img className="mx-auto w-64" src="https://i.pinimg.com/564x/08/69/d1/0869d15820debdbbfa601d0794a64ee6.jpg" alt="" />
-            </a>
-          </div>
+    <>
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Iniciar Sesión
+          </h2>
+        </div>
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Email
+              </label>
+              <div className="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Contraseña
+                </label>
+              </div>
+              <div className="mt-2">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
+              <button
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
+              >
+                Iniciar Sesión
+              </button>
+            </div>
+            {error && (
+              <div className="text-red-500 text-center">{error}</div>
+            )}
+          </form>
         </div>
       </div>
-    </div>
+    </>
   );
 }
