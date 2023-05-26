@@ -1,0 +1,4 @@
+npm install -D tailwindcss  
+npm install @headlessui/react
+npm i @heroicons/react
+npm i @heroicons/react@v1
