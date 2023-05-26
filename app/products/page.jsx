@@ -159,10 +159,6 @@ const handleCartButtonClick = () => {
   setIsCartVisible(!isCartVisible);
 };
 
-const addToCart = (product) => {
-  setCart((currentCart) => [...currentCart, product]);
-};
-
 const handleImageUpload = async (e) => {
   const file = e.target.files[0];
   setSelectedFile(file);
@@ -183,6 +179,31 @@ const handleImageUpload = async (e) => {
     console.error('Error subiendo la imagen: ', error);
   }
 };
+
+const addToCart = (product) => {
+  setCart((currentCart) => {
+    const productIndex = currentCart.findIndex((p) => p.uuid === product.uuid);
+    if (productIndex !== -1) {
+      // El producto ya está en el carrito, no hagamos nada
+      return currentCart;
+    } else {
+      // El producto no está en el carrito, por lo que lo agregamos con cantidad 1
+      const productWithQuantity = { ...product, quantity: 1 };
+      return [...currentCart, productWithQuantity];
+    }
+  });
+};
+
+function updateQuantity(index, newQuantity) {
+  setCart((currentCart) => {
+    let newCart = [...currentCart];
+    newQuantity = parseInt(newQuantity);
+    newQuantity = Number.isNaN(newQuantity) ? 0 : newQuantity;
+
+    newCart[index].quantity = newQuantity;
+    return newCart;
+  });
+}
 
 return (
 //FORMZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
@@ -261,11 +282,11 @@ return (
           <div className="bg-white p-5 rounded-lg w-80vw h-70vh max-w-3xl">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h2 className="text-2xl font-bold">FRENOSA SAC</h2>
-                <p>"LA CASA DE LOS FRENOS HUANCAYO"</p>
+                <h2 className="text-2xl font-bold">LA CASA DEL FRENO HUANCAYO E.I.R.L.</h2>
+                <p>Jr. Panamá 1615-1621 / El Tambo-Huancayo</p>
               </div>
               <div>
-                <p>R.U.C. 20487519112</p>
+                <p>R.U.C. 10733203086</p>
                 <h2 className="text-2xl font-bold">BOLETA DE VENTA</h2>
               </div>
             </div>
@@ -305,75 +326,67 @@ return (
 
             {/* Aquí es donde se muestran los productos en el carrito */}
             <div className="relative">
-            <table className="table-auto w-full mb-4">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2">Cant. De Prod.</th>
-                  <th className="px-4 py-2">Producto</th>
-                  <th className="px-4 py-2">Codigo</th>
-                  <th className="px-4 py-2">Marca de Auto</th>
-                  <th className="px-4 py-2">Precio Unidad</th>
-                  <th className="px-4 py-2">Precio Cantidad</th>
-                  <th className="px-4 py-2 print-hide"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {cart.map((product, index) => (
-                  <tr key={index}>
-                    <td className="border px-4 py-2">{product.quantity}</td>                    
-                    <td className="border px-4 py-2">{product.name}</td>
-                    <td className="border px-4 py-2">{product.code}</td>
-                    <td className="border px-4 py-2">{product.brand_car}</td>
-                    <td className="border px-4 py-2">{product.price_sell}</td>
-                    <td className="border px-4 py-2">{product.price_sell * product.quantity}</td>
-                    <td className="border-transparent px-4 py-2 flex justify-around print-hide">
-                      <button
-                        onClick={() => {
-                          // Asegúrate de tener una función que aumente la cantidad de este producto en el carrito
-                          increaseQuantity(index);
-                        }}
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-full"
-                      >
-                        +
-                      </button>
-                      <button
-                        onClick={() => {
-                          // Asegúrate de tener una función que disminuya la cantidad de este producto en el carrito
-                          decreaseQuantity(index);
-                        }}
-                        className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded-full"
-                      >
-                        -
-                      </button>
-                      <button
-                        onClick={() => {
-                          setCart((currentCart) => currentCart.filter((_, i) => i !== index));
-                        }}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-full"
-                      >
-                        Eliminar
-                      </button>
+              <table className="table-auto w-full mb-4">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2">Cant. De Prod.</th>
+                    <th className="px-4 py-2">Producto</th>
+                    <th className="px-4 py-2">Codigo</th>
+                    <th className="px-4 py-2">Marca de Auto</th>
+                    <th className="px-4 py-2">Precio Unidad</th>
+                    <th className="px-4 py-2">Precio Cantidad</th>
+                    <th className="px-4 py-2 print-hide"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cart.map((product, index) => (
+                    <tr key={index}>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          min="0"
+                          value={product.quantity}
+                          onChange={(e) => {
+                            updateQuantity(index, e.target.value);
+                          }}
+                          className="w-full px-2 py-1"
+                        />
+                      </td>                     
+                      <td className="border px-4 py-2">{product.name}</td>
+                      <td className="border px-4 py-2">{product.code}</td>
+                      <td className="border px-4 py-2">{product.brand_car}</td>
+                      <td className="border px-4 py-2">{product.price_sell}</td>                      
+                      <td className="border px-4 py-2">{product.price_sell * product.quantity}</td>
+                      <td className="border-transparent px-4 py-2 flex justify-around print-hide">
+                        <button
+                          onClick={() => {
+                            setCart((currentCart) => currentCart.filter((_, i) => i !== index));
+                          }}
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-full"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td className="border px-4 py-2" colSpan={5}>
+                      <input
+                        type="text"
+                        placeholder="Concepto adicional de cobro"
+                        className="w-full px-2 py-1"
+                      />
+                    </td>
+                    <td className="border px-4 py-2" colSpan={1}>
+                      <input
+                        type="number"
+                        placeholder="S/. 0"
+                        className="w-full px-2 py-1"
+                      />
                     </td>
                   </tr>
-                ))}
-                <tr>
-                  <td className="border px-4 py-2" colSpan={5}>
-                    <input
-                      type="text"
-                      placeholder="Concepto adicional de cobro"
-                      className="w-full px-2 py-1"
-                    />
-                  </td>
-                  <td className="border px-4 py-2" colSpan={1}>
-                    <input
-                      type="number"
-                      placeholder="S/. 0"
-                      className="w-full px-2 py-1"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
             </div>
 
             {/* Aquí es donde se muestra el total del carrito */}
