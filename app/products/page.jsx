@@ -76,16 +76,15 @@ fetch("http://localhost:3002/products", {
   .then((data) => {
     console.log("Success:", data);
       setProducts((prevProducts) => [...prevProducts, data]);
-
-    setProductName("");
-    setProductDescription("");
-    setProductCode("");
-    setProductBrand("");
-    setProductPriceBuy("");
-    setProductPriceSell("");
-    setProductStock("");
-    setProductImage("");
-    setIsFormVisible(false);
+      setProductName("");
+      setProductDescription("");
+      setProductCode("");
+      setProductBrand("");
+      setProductPriceBuy("");
+      setProductPriceSell("");
+      setProductStock("");
+      setProductImage("");
+      setIsFormVisible(false);
   })
   .catch((error) => {
     console.error;

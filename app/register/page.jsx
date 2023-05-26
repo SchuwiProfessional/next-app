@@ -35,7 +35,7 @@ function RegisterForm() {
         return response.json();
       })
       .then((data) => {
-        push("/login");
+        push("/");
         console.log("Success:", data);
       })
       .catch((error) => {
