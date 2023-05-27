@@ -12,14 +12,14 @@ export default function LoginPage() {
     e.preventDefault();
 
     // Enviar credenciales al servidor para autenticar al usuario
-    const response = await fetch("http://frenosa-backend.onrender.com/user/login ", {
+    const response = await fetch("https://frenosa-backend.onrender.com/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
-
+console.log(response)
     if (response.ok) {
       const { token } = await response.json();
 

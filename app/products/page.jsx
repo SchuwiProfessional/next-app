@@ -26,7 +26,7 @@ export default function ProductsPage() {
 
 useEffect(() => {
   const fetchProducts = async () => {
-    const response = await fetch("http://frenosa-backend.onrender.com/products");
+    const response = await fetch("https://frenosa-backend.onrender.com/products");
     const data = await response.json();
 
     setProducts(data);
@@ -66,7 +66,7 @@ const newProduct = {
   stock: parseInt(productStock)
 };
 
-fetch("http://frenosa-backend.onrender.com/products", {
+fetch("https://frenosa-backend.onrender.com/products", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -107,7 +107,7 @@ const handleEditProduct = (e) => {
       stock: productStock,
     };
 
-    fetch(`http://frenosa-backend.onrender.com/update/${editingProductUuid}`, {  // Aquí es donde cambió la ruta
+    fetch(`https://frenosa-backend.onrender.com/update/${editingProductUuid}`, {  // Aquí es donde cambió la ruta
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +139,7 @@ const handleEditProduct = (e) => {
 };
 
 const handleDeleteProduct = (uuid) => {
-  fetch(`http://frenosa-backend.onrender.com/delete/${uuid}`, {
+  fetch(`https://frenosa-backend.onrender.com/delete/${uuid}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
