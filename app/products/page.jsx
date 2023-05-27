@@ -26,7 +26,7 @@ export default function ProductsPage() {
 
 useEffect(() => {
   const fetchProducts = async () => {
-    const response = await fetch("http://localhost:3002/products");
+    const response = await fetch("http://frenosa-backend.onrender.com/products");
     const data = await response.json();
 
     setProducts(data);
@@ -66,7 +66,7 @@ const newProduct = {
   stock: parseInt(productStock)
 };
 
-fetch("http://localhost:3002/products", {
+fetch("http://frenosa-backend.onrender.com/products", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -107,7 +107,7 @@ const handleEditProduct = (e) => {
       stock: productStock,
     };
 
-    fetch(`http://localhost:3002/update/${editingProductUuid}`, {  // Aquí es donde cambió la ruta
+    fetch(`http://frenosa-backend.onrender.com/update/${editingProductUuid}`, {  // Aquí es donde cambió la ruta
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +139,7 @@ const handleEditProduct = (e) => {
 };
 
 const handleDeleteProduct = (uuid) => {
-  fetch(`http://localhost:3002/delete/${uuid}`, {
+  fetch(`http://frenosa-backend.onrender.com/delete/${uuid}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -168,8 +168,10 @@ const handleImageUpload = async (e) => {
   const formData = new FormData();
   formData.append('image', file);
 
+  //Ruta del backend para la imagen del escritorio
+
   try {
-    const response = await axios.post('/kuchikiiiiiiiiiiiiii/coloca/el/endpoint', formData, {
+    const response = await axios.post('', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

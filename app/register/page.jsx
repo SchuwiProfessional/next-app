@@ -21,7 +21,7 @@ function RegisterForm() {
       role,
     };
 
-    fetch("http://localhost:3002/user", {
+    fetch("https://frenosa-backend.onrender.com/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
