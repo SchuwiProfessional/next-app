@@ -23,6 +23,10 @@ export default function ProductsPage() {
   const [cart, setCart] = useState([]);
   const [productImage, setProductImage] = useState("null");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [customerName, setCustomerName] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerId, setCustomerId] = useState('');
+  const [date, setDate] = useState('');
 
 useEffect(() => {
   const fetchProducts = async () => {
@@ -51,7 +55,7 @@ const handleAddProduct = (e) => {
     !productPriceBuy || 
     !productPriceSell || 
     !productStock) {
-    alert("Todos los campos son obligatorios.");
+    alert("Hay campos obligatorios sin rellenar...");
     return;
   }
 
@@ -187,31 +191,72 @@ const addToCart = (product) => {
   setCart((currentCart) => {
     const productIndex = currentCart.findIndex((p) => p.uuid === product.uuid);
     if (productIndex !== -1) {
-      // El producto ya está en el carrito, no hagamos nada
       return currentCart;
     } else {
-      // El producto no está en el carrito, por lo que lo agregamos con cantidad 1
       const productWithQuantity = { ...product, quantity: 1 };
       return [...currentCart, productWithQuantity];
     }
   });
 };
 
-function updateQuantity(index, newQuantity) {
+const updateQuantity = (index, quantity) => {
   setCart((currentCart) => {
-    let newCart = [...currentCart];
-    newQuantity = parseInt(newQuantity);
-    newQuantity = Number.isNaN(newQuantity) ? 0 : newQuantity;
-
-    newCart[index].quantity = newQuantity;
-    return newCart;
+    const updatedCart = [...currentCart];
+    updatedCart[index].quantity = parseInt(quantity);
+    return updatedCart;
   });
-}
+};
+
+const [extraCharges, setExtraCharges] = useState([
+  { concept: '', amount: 0 },
+]);
+
+const addRow = () => {
+  setExtraCharges([...extraCharges, { concept: '', amount: 0 }]);
+};
+
+const deleteRow = () => {
+  if (extraCharges.length > 1) {
+    setExtraCharges(extraCharges.slice(0, -1));
+  }
+};
+
+const handleExtraChargeChange = (index, field, value) => {
+  const newExtraCharges = [...extraCharges];
+  newExtraCharges[index][field] = value;
+  setExtraCharges(newExtraCharges);
+};
+
+{/* KUCHIKI AQUÍ HAY LOGICA PARA QUE AGERGUES AL BACKEND */}
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  const data = {
+    customerName,
+    customerAddress,
+    customerId,
+    date,
+  };
+
+  const response = await fetch('http://backend_url/api/endpoint', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (response.ok) {
+    // Por agregar
+  } else {
+    // Por agregar tambien
+  }
+};
+
+const saleData = JSON.parse(localStorage.getItem('saleData'));
 
 return (
   <>
     <Navbar/>
-    <div className="mt-6 container mx-auto">      
+    <div className="mt-6 mx-4"> {/* PUTA MADRE UNA MIERDAAAAAAAAAAAAAAAAAA */}   
       <div className="flex justify-between">
         <div className="flex">
           <>
@@ -267,66 +312,82 @@ return (
               <div className="bg-white p-5 rounded-lg w-80vw h-70vh max-w-3xl">
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <h2 className="text-2xl font-bold">LA CASA DEL FRENO HUANCAYO E.I.R.L.</h2>
+                    <h2 className="text-lg font-bold">LA CASA DEL FRENO HUANCAYO E.I.R.L.</h2>
                     <p>Jr. Panamá 1615-1621 / El Tambo-Huancayo</p>
                   </div>
                   <div>
-                    <p>R.U.C. 10733203086</p>
-                    <h2 className="text-2xl font-bold">BOLETA DE VENTA</h2>
+                    <h2 className="text-m font-bold">PROFORMA DE VENTA</h2>
                   </div>
                 </div>
 
                 {/* DNI o RUC, nombre y la fecha */}
-                <form className="mb-4 mt-2">
-                  <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="customer-name">
+                {/* KUCHIKI AQUÍ ESTOY CREANDO TEMPORAL ETIQUETAS, AGREGAS AL BACKEND PARA QUE LOS GUARDE Y LOS MUESTRE EN LA PAG DE REGISTROS DE VENTA*/}
+                <form className="mb-4 mt-2" onSubmit={handleSubmit}>
+                  <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-name">
                     Nombre del cliente:
                   </label>
-                  <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="customer-name" type="text" />
+                  <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="customer-name" 
+                    type="text" 
+                    value={customerName} 
+                    onChange={(e) => setCustomerName(e.target.value)}
+                  />
 
                   <div className="flex justify-between items-center mt-2">
                     <div className="w-full">
-                      <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="customer-address">
+                      <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-address">
                         Dirección:
                       </label>
-                      <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="customer-address" type="text" />
+                      <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="customer-address" 
+                      type="text" 
+                      value={customerAddress} 
+                      onChange={(e) => setCustomerAddress(e.target.value)}/>
                     </div>
                   </div>
 
                   <div className="flex justify-between items-center mt-2">
                     <div className="w-1/2 pr-2">
-                      <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="customer-id">
+                      <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-id">
                         DNI/RUC:
                       </label>
-                      <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4" id="customer-id" type="text" />
+                      <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+                      id="customer-id" 
+                      type="text" 
+                      value={customerId} 
+                      onChange={(e) => setCustomerId(e.target.value)}/>
                     </div>
 
                     <div className="w-1/2 pl-2">
-                      <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="date">
+                      <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="date">
                         Fecha:
                       </label>
-                      <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4" id="date" type="date" />
+                      <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+                      id="date" 
+                      type="date" 
+                      value={date} 
+                      onChange={(e) => setDate(e.target.value)}/>
                     </div>
                   </div>
                 </form>
 
                 {/* Aquí es donde se muestran los productos en el carrito */}
-                <div className="relative">
+                <div className="relative max-h-[18rem] overflow-y-auto">
                   <table className="table-auto w-full mb-4">
                     <thead>
                       <tr>
-                        <th className="px-4 py-2">Cant. De Prod.</th>
-                        <th className="px-4 py-2">Producto</th>
-                        <th className="px-4 py-2">Codigo</th>
-                        <th className="px-4 py-2">Marca de Auto</th>
-                        <th className="px-4 py-2">Precio Unidad</th>
-                        <th className="px-4 py-2">Precio Cantidad</th>
-                        <th className="px-4 py-2 print-hide"></th>
+                        <th className="text-xs px-4 py-2">Cantidad</th>
+                        <th className="text-xs px-4 py-2">Producto</th>
+                        <th className="text-xs px-4 py-2">Codigo</th>
+                        <th className="text-xs px-4 py-2">Marca de Auto</th>
+                        <th className="text-xs px-4 py-2">Precio Unidad</th>
+                        <th className="text-xs px-4 py-2">Precio Cantidad</th>
+                        <th className="text-xs px-4 py-2 print-hide"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {cart.map((product, index) => (
                         <tr key={index}>
-                          <td className="border px-4 py-2">
+                          <td className="text-xs border px-2 py-2">
                             <input
                               type="number"
                               min="0"
@@ -334,15 +395,15 @@ return (
                               onChange={(e) => {
                                 updateQuantity(index, e.target.value);
                               }}
-                              className="w-full px-2 py-1"
+                              className="text-center w-16 px-2 py-1"
                             />
                           </td>                     
-                          <td className="border px-4 py-2">{product.name}</td>
-                          <td className="border px-4 py-2">{product.code}</td>
-                          <td className="border px-4 py-2">{product.brand_car}</td>
-                          <td className="border px-4 py-2">{product.price_sell}</td>                      
-                          <td className="border px-4 py-2">{product.price_sell * product.quantity}</td>
-                          <td className="border-transparent px-4 py-2 flex justify-around print-hide">
+                          <td className="text-xs text-center border px-4 py-2">{product.name}</td>
+                          <td className="text-xs text-center border px-4 py-2">{product.code}</td>
+                          <td className="text-xs text-center border px-4 py-2">{product.brand_car}</td>
+                          <td className="text-xs text-center border w-16 px-2 py-1">{product.price_sell}</td>                      
+                          <td className="text-xs text-center border w-16 px-2 py-1">{product.price_sell * product.quantity}</td>
+                          <td className="text-xs text-center border-transparent px-4 py-2 flex justify-around print-hide">
                             <button
                               onClick={() => {
                                 setCart((currentCart) => currentCart.filter((_, i) => i !== index));
@@ -350,51 +411,96 @@ return (
                               className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-full"
                             >
                               Eliminar
-                            </button>
+                            </button>                            
+                          </td>
+                          
+                        </tr>
+                      ))}
+                      {extraCharges.map((charge, index) => (
+                        <tr key={index}>
+                          <td className="text-xs border px-4 py-2" colSpan={5}>
+                            <input
+                              type="text"
+                              placeholder="Nuevo concepto de cobro"
+                              className="w-full px-2 py-1"
+                              value={charge.concept}
+                              onChange={(e) => handleExtraChargeChange(index, 'concept', e.target.value)}
+                            />
+                          </td>
+                          <td className="text-xs border px-4 py-2" colSpan={1}>
+                          <input
+                            type="text"
+                            placeholder="S/. 0"
+                            className="text-center w-full px-2 py-1"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={charge.amount || ''}
+                            onChange={(e) => handleExtraChargeChange(index, 'amount', parseFloat(e.target.value))}
+                          />
                           </td>
                         </tr>
                       ))}
-                      <tr>
-                        <td className="border px-4 py-2" colSpan={5}>
-                          <input
-                            type="text"
-                            placeholder="Concepto adicional de cobro"
-                            className="w-full px-2 py-1"
-                          />
-                        </td>
-                        <td className="border px-4 py-2" colSpan={1}>
-                          <input
-                            type="number"
-                            placeholder="S/. 0"
-                            className="w-full px-2 py-1"
-                          />
-                        </td>
-                      </tr>
                     </tbody>
+                    <td className="text-center py-2 print-hide" colSpan={6}>
+                      <div className="flex justify-center">
+                        <button onClick={addRow}>➕</button>
+                        <button onClick={deleteRow}>➖</button>
+                      </div>
+                    </td>
                   </table>
                 </div>
-
                 {/* Aquí es donde se muestra el total del carrito */}
-                <div className="flex justify-center items-center mt-8 mb-4">
-                  <h2 className="text-xl font-bold">Total a pagar = S/ {cart.reduce((total, product) => total + product.price_sell, 0)}</h2>
+                <div className="flex justify-center items-center">
+                  <h2 className="text-s text-xl font-bold">
+                    Total = S/
+                    {
+                      (cart.reduce((total, product) => total + product.price_sell * product.quantity, 0) +
+                      extraCharges.reduce((total, charge) => total + charge.amount, 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })
+                    }
+                  </h2>
                 </div>
-
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center print-hide">
                   <button
                     onClick={() => setIsCartVisible(false)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                    className="text-xs bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
                   >
                     Cerrar Carrito
                   </button>
+                  <div className="flex gap-2">
+                  
+                  {/* CODIGO BOTON PAGAR */}
                   <button
-                    onClick={() => {
-                      // Agregar lógica para guardar el estado de pago en la base de datos
-                      console.log('Pago registrado');
+                    onClick={async () => {
+                      const customerData = {
+                        name: customerName,
+                        address: customerAddress,
+                        id: customerId,
+                        date,
+                        cart,
+                        extraCharges,
+                        total: cart.reduce((total, product) => total + product.price_sell * product.quantity, 0) +
+                          extraCharges.reduce((total, charge) => total + charge.amount, 0),
+                      };
+                      let salesData = JSON.parse(localStorage.getItem('saleData')) || [];
+                      
+                      salesData.push(customerData);
+                      localStorage.setItem('saleData', JSON.stringify(salesData));
+                    
+                      window.location.href = '/salesRecord';
                     }}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+                    className="text-xs bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
                   >
-                    Pagado
+                    Pagar
                   </button>
+                    <a
+                      href="https://example.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-full"
+                    >
+                      Boleta Venta Electrónica
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -405,13 +511,16 @@ return (
           {filteredProducts.map((product) => (
             <div
               key={product.id}
-              className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 px-4 mb-8"
+              className="w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-1/6 px-2 mb-4"
             >
               <div>
                 <div className="px-4 py-2 flex flex-col border border-gray-300 rounded-md bg-purple-50 hover:shadow-lg transition duration-100 ease-in text-sm">
                   {product.image && (
                     <div className="mb-2">
-                      <img src={product.image} alt={product.name} className="w-full object-cover h-48" />
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full object-cover h-48" />
                     </div>
                   )}
                   <h2 className="text-center text-gray-900 font-bold text-lg mb-1">
@@ -471,183 +580,184 @@ return (
             </div>
           ))}
         </div>
-      
-        {isFormVisible && (
-          <div className="" style={{width: '60%', margin: 'auto'}}>
-            <form className="form-container border border-gray-350 rounded-md mr-4" style={{ height: '93vh' }}>
-              <h2 className="text-gray-900 font-bold text-lg mb-5 text-center">
-                ➕ Agregando / Editando Producto
-              </h2>
-              {/* CANCELL */}
-              <div className="flex justify-center space-x-8">
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline closeButton"
-                  onClick={() => setIsFormVisible(false)}
-                >
-                  ❌ Cancelar
-                </button>
-                {/* AGREGAR / ACTUALIZAR */}
-                <button
-                  className="bg-blue-500 hover:bg-blue-600 transition duration-100 ease-in text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
-                  type="submit"
-                  onClick={editingProductUuid ? handleEditProduct : handleAddProduct}
-                >
-                  {editingProductUuid ? "✔ Actualizar" : "✔ Agregar"}
-                </button>
-              </div>
-            
-              <div className="bg-gray-90">                
-                {/* NAME */}
-                <div className="mb-4">
-                  <label
-                    className="mt-5 block text-gray-700 font-bold mb-2"
-                    htmlFor="name"
+        <div className="flex justify-center items-center h-screen pt-4 pb-4">
+          {isFormVisible && (
+            <div className="" style={{width: '60%', margin: 'auto'}}>
+              <form className="form-container border border-gray-350 rounded-md px-2 py-2 sm:px-6 sm:py-4 lg:px-8 lg:py-6 xl:px-10 xl:py-8 mr-4" style={{width: '450px'}}>
+                <h2 className="text-sm sm:text-base lg:text-lg xl:text-xl text-gray-900 font-bold text-m mb-5 text-center">
+                  ➕ Agregando / Editando Producto
+                </h2>
+                {/* CANCELL */}
+                <div className="flex justify-center space-x-8">
+                  <button
+                    className="text-xs bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline closeButton"
+                    onClick={() => setIsFormVisible(false)}
                   >
-                    Nombre
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="name"
-                    type="text"
-                    placeholder="Nombre del producto"
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
-                  />
-                </div>
-
-                {/* CODE */}
-                <div className="flex mb-4">
-                <div className="mr-2">
-                  <label className="block text-gray-700 font-bold mb-2" htmlFor="code">
-                    Código
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="code"
-                    type="text"
-                    placeholder="Código del producto"
-                    value={productCode}
-                    onChange={(e) => setProductCode(e.target.value)}
-                  />
-                </div>
-
-                {/* BRAND_CAR */}
-                <div className="ml-2">
-                  <label className="block text-gray-700 font-bold mb-2" htmlFor="brand_car">
-                    Marca del auto
-                    <a
-                      className="ml-2 text-blue-500 cursor-pointer"
-                      href="https://www.eleconomista.es/ecomotor/marcas/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      VER
-                    </a>
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="brand_car"
-                    type="text"
-                    placeholder="TOYOTA / HYUNDAI / etc."
-                    value={productBrand}
-                    onChange={(e) => setProductBrand(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* DESCRIPTION */}
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 font-bold mb-2"
-                  htmlFor="description"
-                >
-                  Descripción
-                </label>
-                <textarea
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="description"
-                  placeholder="Descripción del producto : / Frenos / Pastillas / etc."
-                  value={productDescription}
-                  onChange={(e) => setProductDescription(e.target.value)}
-                />
-              </div>
-
-              {/* PRICE_BUY */}
-              <div className="flex mb-4">
-                <div className="mr-4">
-                  <label
-                    className="block text-gray-700 font-bold mb-2"
-                    htmlFor="price_buy"
+                    ❌ Cancelar
+                  </button>
+                  {/* AGREGAR / ACTUALIZAR */}
+                  <button
+                    className="text-xs bg-blue-500 hover:bg-blue-600 transition duration-100 ease-in text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                    type="submit"
+                    onClick={editingProductUuid ? handleEditProduct : handleAddProduct}
                   >
-                    Precio de compra
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="price_buy"
-                    type="number"
-                    placeholder="Precio de compra"
-                    value={productPriceBuy}
-                    onChange={(e) => setProductPriceBuy(Number(e.target.value))}
-                  />
+                    {editingProductUuid ? "✔ Actualizar" : "✔ Agregar"}
+                  </button>
                 </div>
               
-                {/* PRICE_SELL */}
-                <div className="ml-2">
+                <div className="bg-gray-90">                
+                  {/* NAME */}
+                  <div className="mb-2">
+                    <label
+                      className="mt-5 block text-gray-700 font-bold mb-2"
+                      htmlFor="name"
+                    >
+                      Nombre
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="name"
+                      type="text"
+                      placeholder="Nombre del producto"
+                      value={productName}
+                      onChange={(e) => setProductName(e.target.value)}
+                    />
+                  </div>
+
+                  {/* CODE */}
+                  <div className="flex mb-2">
+                  <div className="mr-2">
+                    <label className="block text-gray-700 font-bold mb-2" htmlFor="code">
+                      Código
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="code"
+                      type="text"
+                      placeholder="Código del producto"
+                      value={productCode}
+                      onChange={(e) => setProductCode(e.target.value)}
+                    />
+                  </div>
+
+                  {/* BRAND_CAR */}
+                  <div className="ml-2">
+                    <label className="block text-gray-700 font-bold mb-2" htmlFor="brand_car">
+                      Marca del auto
+                      <a
+                        className="ml-2 text-blue-500 cursor-pointer"
+                        href="https://www.eleconomista.es/ecomotor/marcas/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        VER
+                      </a>
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="brand_car"
+                      type="text"
+                      placeholder="TOYOTA / HYUNDAI / etc."
+                      value={productBrand}
+                      onChange={(e) => setProductBrand(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* DESCRIPTION */}
+                <div className="mb-2">
                   <label
                     className="block text-gray-700 font-bold mb-2"
-                    htmlFor="price_sell"
+                    htmlFor="description"
                   >
-                    Precio de venta
+                    Descripción
+                  </label>
+                  <textarea
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="description"
+                    placeholder="Freno Cerámico / Pastillas / Aceite / etc."
+                    value={productDescription}
+                    onChange={(e) => setProductDescription(e.target.value)}
+                  />
+                </div>
+
+                {/* PRICE_BUY */}
+                <div className="flex mb-2">
+                  <div className="mr-2">
+                    <label
+                      className="block text-gray-700 font-bold mb-2"
+                      htmlFor="price_buy"
+                    >
+                      Precio de compra
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="price_buy"
+                      type="number"
+                      placeholder="Precio de compra"
+                      value={productPriceBuy}
+                      onChange={(e) => setProductPriceBuy(Number(e.target.value))}
+                    />
+                  </div>
+                
+                  {/* PRICE_SELL */}
+                  <div className="ml-2">
+                    <label
+                      className="block text-gray-700 font-bold mb-2"
+                      htmlFor="price_sell"
+                    >
+                      Precio de venta
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="price_sell"
+                      type="number"
+                      placeholder="Precio para venta"
+                      value={productPriceSell}
+                      onChange={(e) => setProductPriceSell(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+
+                {/* STOCK */}
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 font-bold mb-2"
+                    htmlFor="stock"
+                  >
+                    Stock
                   </label>
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="price_sell"
+                    id="stock"
                     type="number"
-                    placeholder="Precio para venta"
-                    value={productPriceSell}
-                    onChange={(e) => setProductPriceSell(Number(e.target.value))}
+                    placeholder="Cantidad disponible en Stock"
+                    value={productStock}
+                    onChange={(e) => setProductStock(Number(e.target.value))}
                   />
                 </div>
-              </div>
 
-              {/* STOCK */}
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 font-bold mb-2"
-                  htmlFor="stock"
-                >
-                  Stock
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="stock"
-                  type="number"
-                  placeholder="Cantidad disponible en Stock"
-                  value={productStock}
-                  onChange={(e) => setProductStock(Number(e.target.value))}
-                />
-              </div>
-
-              {/* IMAGE */}
-              <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2" htmlFor="image">
-                  Imagen
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-                  {productImage && (
-                    <div className="mt-2 w-full aspect-w-1 aspect-h-1">
-                      <img src={productImage} alt="Vista previa" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                </div>            
-              </div>
-            </form>   
-          </div>
-        )}
+                {/* IMAGE */}
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-bold mb-2" htmlFor="image">
+                    Imagen
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                    {productImage && (
+                      <div className="mt-2 w-full aspect-w-1 aspect-h-1">
+                        <img src={productImage} alt="Vista previa" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>            
+                </div>
+              </form>   
+            </div>
+          )}
+        </div>
       </div>
     </div>
   </>
