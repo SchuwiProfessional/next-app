@@ -517,7 +517,7 @@ return (
                 <div className="px-4 py-2 flex flex-col border border-gray-300 rounded-md bg-purple-50 hover:shadow-lg transition duration-100 ease-in text-sm">
                   {product.image && (
                     <div className="mb-2">
-                      <img 
+                      <Image 
                         src={product.image} 
                         alt={product.name} 
                         className="w-full object-cover h-48" />
@@ -749,7 +749,7 @@ return (
                   />
                     {productImage && (
                       <div className="mt-2 w-full aspect-w-1 aspect-h-1">
-                        <img src={productImage} alt="Vista previa" className="w-full h-full object-cover" />
+                        <Image src={productImage} alt="Vista previa" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>            
