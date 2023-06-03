@@ -8,15 +8,25 @@ function SalesRecord() {
   const [selectedSale, setSelectedSale] = useState(null);
 
   useEffect(() => {
-    const saleData = JSON.parse(localStorage.getItem('saleData')) || [];
-    setSalesData((currentSalesData) => [...currentSalesData, ...saleData]);
+    let DegistoDDentas;
+  
+    try {
+      DegistoDDentas = JSON.parse(localStorage.getItem('saleData'));
+    } catch (error) {
+      console.error('Error parsing salesData from localStorage:', error);
+    }
+  
+    if (Array.isArray(DegistoDDentas)) {
+      setSalesData(DegistoDDentas);
+    } else {
+      setSalesData([]);
+    }
   }, []);
 
   const handleRowClick = (sale) => {
-    localStorage.setItem('selectedSale', JSON.stringify(sale)); // Cambio aquí
     setSelectedSale(sale);
   }
-
+  
   return (
     <>
       <Navbar />      
@@ -36,8 +46,8 @@ function SalesRecord() {
               {salesData.map((sale, index) => (
                 <tr key={index} onClick={() => handleRowClick(sale)}>
                   <td className="border px-4 py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{sale.customerName}</td>
-                  <td className="border px-4 py-2">{sale.customerId}</td>
+                  <td className="border px-4 py-2">{sale.name}</td>
+                  <td className="border px-4 py-2">{sale.id}</td>
                   <td className="border px-4 py-2">{sale.date}</td>
                 </tr>
               ))}
@@ -64,5 +74,4 @@ function SalesRecord() {
     </>
   );
 }
-
 export default SalesRecord;

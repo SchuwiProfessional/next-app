@@ -161,4 +161,4 @@ function CarouselSlide({ imageSrc, captionTitle, captionText }) {
       </div>
     </div>
   );
-}
+}     
