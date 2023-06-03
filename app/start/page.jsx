@@ -5,6 +5,8 @@ import Link from "next/link";
 import Navbar from "../../components/navbar";
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import Image from 'next/image';
+
 
 export default function StartPage() {
   return (

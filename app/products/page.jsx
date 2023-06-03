@@ -5,6 +5,8 @@ import "styles/globals.css";
 import "./products.css";
 import Link from "next/link";
 import Navbar from "../../components/navbar";  
+import Image from 'next/image';
+
 
 export default function ProductsPage() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
