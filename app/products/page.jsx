@@ -23,9 +23,9 @@ export default function ProductsPage() {
   const [cart, setCart] = useState([]);
   const [productImage, setProductImage] = useState("null");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [customerName, setCustomerName] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
-  const [customerId, setCustomerId] = useState('');
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [dni, setDni] = useState('');
   const [date, setDate] = useState('');
 
 useEffect(() => {
@@ -256,7 +256,7 @@ const saleData = JSON.parse(localStorage.getItem('saleData'));
 return (
   <>
     <Navbar/>
-    <div className="mt-6 mx-4"> {/* PUTA MADRE UNA MIERDAAAAAAAAAAAAAAAAAA */}   
+    <div className="mt-6 mx-4">
       <div className="flex justify-between">
         <div className="flex">
           <>
@@ -320,8 +320,7 @@ return (
                   </div>
                 </div>
 
-                {/* DNI o RUC, nombre y la fecha */}
-                {/* KUCHIKI AQUÍ ESTOY CREANDO TEMPORAL ETIQUETAS, AGREGAS AL BACKEND PARA QUE LOS GUARDE Y LOS MUESTRE EN LA PAG DE REGISTROS DE VENTA*/}
+                {/* DNI o RUC, nombre y la fecha */}                
                 <form className="mb-4 mt-2" onSubmit={handleSubmit}>
                   <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-name">
                     Nombre del cliente:
@@ -329,8 +328,8 @@ return (
                   <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="customer-name" 
                     type="text" 
-                    value={customerName} 
-                    onChange={(e) => setCustomerName(e.target.value)}
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)}
                   />
 
                   <div className="flex justify-between items-center mt-2">
@@ -340,8 +339,8 @@ return (
                       </label>
                       <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="customer-address" 
                       type="text" 
-                      value={customerAddress} 
-                      onChange={(e) => setCustomerAddress(e.target.value)}/>
+                      value={address} 
+                      onChange={(e) => setAddress(e.target.value)}/>
                     </div>
                   </div>
 
@@ -353,8 +352,8 @@ return (
                       <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
                       id="customer-id" 
                       type="text" 
-                      value={customerId} 
-                      onChange={(e) => setCustomerId(e.target.value)}/>
+                      value={dni} 
+                      onChange={(e) => setDni(e.target.value)}/>
                     </div>
 
                     <div className="w-1/2 pl-2">
@@ -468,25 +467,52 @@ return (
                   </button>
                   <div className="flex gap-2">
                   
-                  {/* CODIGO BOTON PAGAR */}
+                  {/* CODIGO BOTON PAGAR */} 
                   <button
                     onClick={async () => {
-                      const customerData = {
-                        name: customerName,
-                        address: customerAddress,
-                        id: customerId,
+                      const customerData = { //POR EDITAAAAAAAAAAAAAAAAARRRRRRRRRR FALTAN CAMBIOS
+                        name: name,
+                        address: address,
+                        id: dni,
                         date,
                         cart,
                         extraCharges,
                         total: cart.reduce((total, product) => total + product.price_sell * product.quantity, 0) +
                           extraCharges.reduce((total, charge) => total + charge.amount, 0),
                       };
-                      let salesData = JSON.parse(localStorage.getItem('saleData')) || [];
-                      
-                      salesData.push(customerData);
-                      localStorage.setItem('saleData', JSON.stringify(salesData));
-                    
-                      window.location.href = '/salesRecord';
+
+                      // Aquí convertimos los datos del carrito y del cliente a la forma que espera la API
+                      const cartItems = customerData.cart.map((item) => ({
+                        uuid: item.uuid, // ID DE REG DE VENTA
+                        quantity: item.quantity, // CANTIDAD POR DISMINUIR EN BACKEND
+                        collection: item.collection, // DESCRIPCION DEL COBRO
+                        amount: item.price_sell, // PRECIO DE CONCEPTO DE COBRO
+                        name: customerData.name,
+                        address: customerData.address,
+                        dni: customerData.id,
+                        date: customerData.date,
+                      }));
+
+                      try {                             //por revision de funcionanmiento correcto
+                        await fetchApi('/api/cart/add', 'POST', cartItems);
+                      } catch (error) {
+                        console.error('Error al hacer la llamada a la API', error);
+                      }
+
+                      let salesData;
+                        try {
+                          salesData = JSON.parse(localStorage.getItem('saleData'));
+                        } catch (error) {
+                          console.error('Error parsing salesData from localStorage:', error);
+                        }
+
+                        if (!Array.isArray(salesData)) {
+                          salesData = [];
+                        }
+                        salesData.push(customerData);
+                        localStorage.setItem('saleData', JSON.stringify(salesData));
+
+                        window.location.href = '/salesRecord';
                     }}
                     className="text-xs bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
                   >
@@ -560,7 +586,7 @@ return (
                           setProductBrand(product.brand_car);
                           setProductPriceBuy(product.price_buy);
                           setProductPriceSell(product.price_sell);
-                          setProductStock(product.stock);
+                          setProductStock(product.stock); //por jugaar y mazamorrear _________________________________________________
                           setProductImage(product.image);
                           setEditingProductUuid(product.uuid);
                         }}
