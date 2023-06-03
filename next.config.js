@@ -5,7 +5,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   images: {
-    domains: ['64.media.tumblr.com', 'encrypted-tbn0.gstatic.com'] // Agrega aquí los dominios de las imágenes que deseas usar
+    domains: ['64.media.tumblr.com', 'encrypted-tbn0.gstatic.com','i.postimg.cc', 'sp-ao.shortpixel.ai', 'http2.mlstatic.com','images-na.ssl-images-amazon.com' ,'www.frenosa.com'] // Agrega aquí los dominios de las imágenes que deseas usar
   }
 }
 

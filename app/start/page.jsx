@@ -3,10 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "../../components/navbar";
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import Image from 'next/image';
-
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Image from "next/image";
 
 export default function StartPage() {
   return (
@@ -15,7 +14,13 @@ export default function StartPage() {
       <div className="index-page-body flex flex-col items-center justify-center bg-gray-100">
         <div className="container mx-auto">
           <div className="text-center mt-8">
-            <Image src="https://i.postimg.cc/B6Zw1wCd/logo1.jpg " alt="Logo" className="ml-2 h-8" />
+            <Image
+              src="https://i.postimg.cc/B6Zw1wCd/logo1.jpg "
+              alt="Logo"
+              width={50}
+              height={50}
+              className="ml-2 h-8"
+            />
             <h1 className="text-3xl font-bold">La casa del Freno Huancayo</h1>
           </div>
           <div className="lg:text-center mt-8">
@@ -97,6 +102,8 @@ export default function StartPage() {
                 <Image
                   src="https://http2.mlstatic.com/D_NQ_NP_610664-MLM42558926239_072020-O.webp"
                   alt="Producto 1"
+                  width={600}
+                  height={600}
                   className="w-full h-auto object-cover mb-4"
                 />
                 <h2 className="text-lg font-bold mb-2">Patillas de Freno</h2>
@@ -109,7 +116,9 @@ export default function StartPage() {
                 <Image
                   src="https://images-na.ssl-images-amazon.com/images/I/81dCbCz8PYL._AC_UL600_SR600,600_.jpg"
                   alt="Producto 2"
-                  className="w-full h-auto object-cover mb-4" 
+                  width={600}
+                  height={600}
+                  className="w-full h-auto object-cover mb-4"
                 />
                 <h2 className="text-lg font-bold mb-2">Blue Hi-Temp</h2>
                 <p className="text-gray-700">Grasa</p>
@@ -121,6 +130,8 @@ export default function StartPage() {
                 <Image
                   src="https://www.frenosa.com/wp-content/uploads/2019/06/pastillas-ceramik-ex.png"
                   alt="Producto 3"
+                  width={600}
+                  height={600}
                   className="w-full h-auto object-cover mb-4"
                 />
                 <h2 className="text-lg font-bold mb-2">Pastillas de freno</h2>
@@ -130,7 +141,6 @@ export default function StartPage() {
           </div>
         </div>
       </div>
-
     </>
   );
 }
@@ -138,7 +148,13 @@ export default function StartPage() {
 function CarouselSlide({ imageSrc, captionTitle, captionText }) {
   return (
     <div className="relative">
-      <Image className="w-full" src={imageSrc} alt="" />
+      <Image
+        className="w-full"
+        width={600}
+        height={600}
+        src={imageSrc}
+        alt=""
+      />
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center">
         <h3 className="text-3xl font-bold mb-4">{captionTitle}</h3>
         <p className="text-lg">{captionText}</p>
