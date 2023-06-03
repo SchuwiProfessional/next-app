@@ -13,7 +13,7 @@ export default function StartPage() {
       <div className="index-page-body flex flex-col items-center justify-center bg-gray-100">
         <div className="container mx-auto">
           <div className="text-center mt-8">
-            <img src="https://i.postimg.cc/B6Zw1wCd/logo1.jpg " alt="Logo" className="ml-2 h-8" />
+            <Image src="https://i.postimg.cc/B6Zw1wCd/logo1.jpg " alt="Logo" className="ml-2 h-8" />
             <h1 className="text-3xl font-bold">La casa del Freno Huancayo</h1>
           </div>
           <div className="lg:text-center mt-8">
@@ -92,7 +92,7 @@ export default function StartPage() {
           <div className="flex justify-center mt-8">
             <div className="w-1/3 px-4">
               <div className="bg-white p-4 rounded shadow">
-                <img
+                <Image
                   src="https://http2.mlstatic.com/D_NQ_NP_610664-MLM42558926239_072020-O.webp"
                   alt="Producto 1"
                   className="w-full h-auto object-cover mb-4"
@@ -104,7 +104,7 @@ export default function StartPage() {
 
             <div className="w-1/3 px-4">
               <div className="bg-white p-4 rounded shadow">
-                <img
+                <Image
                   src="https://images-na.ssl-images-amazon.com/images/I/81dCbCz8PYL._AC_UL600_SR600,600_.jpg"
                   alt="Producto 2"
                   className="w-full h-auto object-cover mb-4" 
@@ -116,7 +116,7 @@ export default function StartPage() {
 
             <div className="w-1/3 px-4">
               <div className="bg-white p-4 rounded shadow">
-                <img
+                <Image
                   src="https://www.frenosa.com/wp-content/uploads/2019/06/pastillas-ceramik-ex.png"
                   alt="Producto 3"
                   className="w-full h-auto object-cover mb-4"
@@ -136,7 +136,7 @@ export default function StartPage() {
 function CarouselSlide({ imageSrc, captionTitle, captionText }) {
   return (
     <div className="relative">
-      <img className="w-full" src={imageSrc} alt="" />
+      <Image className="w-full" src={imageSrc} alt="" />
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center">
         <h3 className="text-3xl font-bold mb-4">{captionTitle}</h3>
         <p className="text-lg">{captionText}</p>
