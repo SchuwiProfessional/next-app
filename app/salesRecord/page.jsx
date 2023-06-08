@@ -74,4 +74,5 @@ function SalesRecord() {
     </>
   );
 }
+
 export default SalesRecord;
