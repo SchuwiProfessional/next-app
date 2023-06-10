@@ -36,7 +36,7 @@ export default function Navbar() {
           <li className="hover:text-blue-300 transition duration-300 ease-in-out transform hover:-translate-y-0.5 hover:scale-100">
             <Link href="/salesRecord">Registro de Ventas</Link>
           </li>
-          <div class="menu-container">            
+          <div className="menu-container">            
             <Menu as="div" className="relative ml-3 inline-block text-left">
               <div>
                 <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -66,7 +66,7 @@ export default function Navbar() {
                     <Menu.Item>
                       {({ active }) => (
                         <button onClick={handleLogout} className={classNames(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'w-full text-left block px-4 py-2 text-sm')}>
-                          Cerrar Sesión
+                          Cerrar SesiÃ³n
                         </button>
                       )}
                     </Menu.Item>

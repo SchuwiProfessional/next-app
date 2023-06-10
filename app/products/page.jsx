@@ -1,12 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-//import { v4 as uuidv4 } from "uuid";
 import "styles/globals.css";
 import "./products.css";
 import Link from "next/link";
 import Navbar from "../../components/navbar";
-import Image from "next/image";
-
 
 export default function ProductsPage() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -29,6 +26,8 @@ export default function ProductsPage() {
   const [address, setAddress] = useState('');
   const [dni, setDni] = useState('');
   const [date, setDate] = useState('');
+  const [placa, setPlaca] = useState('');
+  const [marca, setMarca] = useState('');
 
 useEffect(() => {
   const fetchProducts = async () => {
@@ -61,16 +60,17 @@ const handleAddProduct = (e) => {
     return;
   }
 
-const newProduct = {
+const CartProduct ={
   name: productName,
-  code: productCode,
-  description: productDescription,
-  image: productImage,
-  brand_car: productBrand,
-  price_buy: parseFloat(productPriceBuy),
-  price_sell: parseFloat(productPriceSell),
-  stock: parseInt(productStock)
-};
+  amount: productCode, ///Esto debe ser diferente al campo obligatorio
+  collection: productDescription,
+  address: productImage,
+  dni: productBrand,
+  placa: parseFloat(productPriceBuy),
+  marca: parseFloat(productPriceSell),
+  date: parseInt(productStock)
+}
+
 
 fetch("https://frenosa-backend.onrender.com/products", {
   method: "POST",
@@ -97,7 +97,32 @@ fetch("https://frenosa-backend.onrender.com/products", {
     console.error;
   });
 };
-
+fetch("localhost:3002/addToCart", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(CartProduct),
+})
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("Success:", data);
+      setProducts((prevProducts) => [...prevProducts, data]);
+      setProductName("");
+      setProductAmount("");
+      setProductCollection("");
+      setProductAddress("");
+      setProductDni("");
+      setProductPlaca("");
+      setProductMarca("");
+      setProductDate("");
+      
+    
+  })
+  .catch((error) => {
+    console.error;
+  });
+};
 const handleEditProduct = (e) => {
   e.preventDefault();
   
@@ -166,29 +191,6 @@ const handleCartButtonClick = () => {
   setIsCartVisible(!isCartVisible);
 };
 
-const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-  setSelectedFile(file);
-  setProductImage(URL.createObjectURL(file));
-
-  const formData = new FormData();
-  formData.append('image', file);
-
-  //Ruta del backend para la imagen del escritorio
-
-  try {
-    const response = await axios.post('', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    setProductImage(response.data.imageUrl);
-  } catch (error) {
-    console.error('Error subiendo la imagen: ', error);
-  }
-};
-
 const addToCart = (product) => {
   setCart((currentCart) => {
     const productIndex = currentCart.findIndex((p) => p.uuid === product.uuid);
@@ -229,31 +231,34 @@ const handleExtraChargeChange = (index, field, value) => {
   setExtraCharges(newExtraCharges);
 };
 
-{/* KUCHIKI AQUÍ HAY LOGICA PARA QUE AGERGUES AL BACKEND */}
-const handleSubmit = async (event) => {
-  event.preventDefault();
-
+const handlePayment = async () => {
   const data = {
-    customerName,
-    customerAddress,
-    customerId,
+    customerName: name,
+    address,
+    vehicleBrand: marca,
+    vehiclePlate: placa,
+    dniOrRuc: dni,
     date,
+    cartItems: cart,
+    total: cart.reduce((total, product) => total + product.price_sell * product.quantity, 0),
   };
 
-  const response = await fetch('http://backend_url/api/endpoint', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  const encodedData = encodeURIComponent(JSON.stringify(data));
+  const url = `http://localhost:3002/cart?data=${encodedData}`;
 
-  if (response.ok) {
-    // Por agregar
-  } else {
-    // Por agregar tambien
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log('Datos guardados en el backend:', responseData);
+    } else {
+      console.error('Error al guardar los datos:', response.status);
+    }
+  } catch (error) {
+    console.error('Error al enviar la solicitud:', error);
   }
 };
 
-const saleData = JSON.parse(localStorage.getItem('saleData'));
 
 return (
   <>
@@ -323,7 +328,7 @@ return (
                 </div>
 
                 {/* DNI o RUC, nombre y la fecha */}                
-                <form className="mb-4 mt-2" onSubmit={handleSubmit}>
+                <form className="mb-4 mt-1">
                   <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-name">
                     Nombre del cliente:
                   </label>
@@ -333,20 +338,39 @@ return (
                     value={name} 
                     onChange={(e) => setName(e.target.value)}
                   />
-
-                  <div className="flex justify-between items-center mt-2">
-                    <div className="w-full">
+                  <div className="w-full mt-1">
                       <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-address">
                         Dirección:
                       </label>
-                      <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="customer-address" 
+                      <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="customer-address"
                       type="text" 
                       value={address} 
                       onChange={(e) => setAddress(e.target.value)}/>
                     </div>
+                  <div className="flex justify-between items-center">
+                    <div className="w-1/2 pr-2 mt-2">
+                      <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-brand">
+                        Marca del Vehículo
+                      </label>
+                      <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+                      id="customer-brand"
+                      type="text" 
+                      value={marca} 
+                      onChange={(e) => setMarca(e.target.value)}/>
+                    </div>
+                    <div className="w-1/2 pl-2 mt-2">
+                      <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-plate">
+                        Placa del Vehículo
+                      </label>
+                      <input className="shadow appearance-none border rounded w-full py-1 px-2 text-xs text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+                      id="customer-plate"
+                      type="text" 
+                      value={placa} 
+                      onChange={(e) => setPlaca(e.target.value)}/>
+                    </div>
                   </div>
 
-                  <div className="flex justify-between items-center mt-2">
+                  <div className="flex justify-between items-center">
                     <div className="w-1/2 pr-2">
                       <label className="block mb-2 text-xs font-bold text-gray-700" htmlFor="customer-id">
                         DNI/RUC:
@@ -372,8 +396,8 @@ return (
                 </form>
 
                 {/* Aquí es donde se muestran los productos en el carrito */}
-                <div className="relative max-h-[18rem] overflow-y-auto">
-                  <table className="table-auto w-full mb-4">
+                <div className="relative max-h-[16rem] overflow-y-auto">
+                  <table className="table-auto w-full mb-2">
                     <thead>
                       <tr>
                         <th className="text-xs px-4 py-2">Cantidad</th>
@@ -471,53 +495,10 @@ return (
                   
                   {/* CODIGO BOTON PAGAR */} 
                   <button
-                    onClick={async () => {
-                      const customerData = { //POR EDITAAAAAAAAAAAAAAAAARRRRRRRRRR FALTAN CAMBIOS
-                        name: name,
-                        address: address,
-                        id: dni,
-                        date,
-                        cart,
-                        extraCharges,
-                        total: cart.reduce((total, product) => total + product.price_sell * product.quantity, 0) +
-                          extraCharges.reduce((total, charge) => total + charge.amount, 0),
-                      };
-
-                      // Aquí convertimos los datos del carrito y del cliente a la forma que espera la API
-                      const cartItems = customerData.cart.map((item) => ({
-                        uuid: item.uuid, // ID DE REG DE VENTA
-                        quantity: item.quantity, // CANTIDAD POR DISMINUIR EN BACKEND
-                        collection: item.collection, // DESCRIPCION DEL COBRO
-                        amount: item.price_sell, // PRECIO DE CONCEPTO DE COBRO
-                        name: customerData.name,
-                        address: customerData.address,
-                        dni: customerData.id,
-                        date: customerData.date,
-                      }));
-
-                      try {                             //por revision de funcionanmiento correcto
-                        await fetchApi('/api/cart/add', 'POST', cartItems);
-                      } catch (error) {
-                        console.error('Error al hacer la llamada a la API', error);
-                      }
-
-                      let salesData;
-                        try {
-                          salesData = JSON.parse(localStorage.getItem('saleData'));
-                        } catch (error) {
-                          console.error('Error parsing salesData from localStorage:', error);
-                        }
-
-                        if (!Array.isArray(salesData)) {
-                          salesData = [];
-                        }
-                        salesData.push(customerData);
-                        localStorage.setItem('saleData', JSON.stringify(salesData));
-
-                        window.location.href = '/salesRecord';
-                    }}
+                    onClick={handlePayment}
                     className="text-xs bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-                  >
+                    onClick={() => CartProduct(product)}
+>
                     Pagar
                   </button>
                     <a
@@ -543,16 +524,7 @@ return (
             >
               <div>
                 <div className="px-4 py-2 flex flex-col border border-gray-300 rounded-md bg-purple-50 hover:shadow-lg transition duration-100 ease-in text-sm">
-                  {product.image && (
-                    <div className="mb-2">
-                      <Image 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="w-full object-cover h-48"
-                        width={50}
-                        height={50} />
-                    </div>
-                  )}
+                  
                   <h2 className="text-center text-gray-900 font-bold text-lg mb-1">
                     {product.name}
                   </h2>
@@ -765,29 +737,7 @@ return (
                     value={productStock}
                     onChange={(e) => setProductStock(Number(e.target.value))}
                   />
-                </div>
-
-                {/* IMAGE */}
-                <div className="mb-4">
-                  <label className="block text-gray-700 font-bold mb-2" htmlFor="image">
-                    Imagen
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
-                    {productImage && (
-                      <div className="mt-2 w-full aspect-w-1 aspect-h-1">
-                        <Image 
-                        src={productImage} 
-                        alt="Vista previa" 
-                        className="w-full h-full object-cover"
-                        width={50}
-                        height={50} />
-                      </div>
-                    )}
-                  </div>            
+                </div>                          
                 </div>
               </form>   
             </div>
