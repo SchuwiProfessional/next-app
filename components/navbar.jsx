@@ -36,7 +36,7 @@ export default function Navbar() {
           <li className="hover:text-blue-300 transition duration-300 ease-in-out transform hover:-translate-y-0.5 hover:scale-100">
             <Link href="/salesRecord">Registro de Ventas</Link>
           </li>
-          <div class="menu-container">            
+          <div className="menu-container">            
             <Menu as="div" className="relative ml-3 inline-block text-left">
               <div>
                 <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
