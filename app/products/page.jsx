@@ -5,6 +5,7 @@ import "./products.css";
 import Link from "next/link";
 import Navbar from "../../components/navbar";
 
+
 export default function ProductsPage() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [productName, setProductName] = useState("");
@@ -60,17 +61,16 @@ const handleAddProduct = (e) => {
     return;
   }
 
-const CartProduct ={
+const newProduct = {
   name: productName,
-  amount: productCode, ///Esto debe ser diferente al campo obligatorio
-  collection: productDescription,
-  address: productImage,
-  dni: productBrand,
-  placa: parseFloat(productPriceBuy),
-  marca: parseFloat(productPriceSell),
-  date: parseInt(productStock)
-}
-
+  code: productCode,
+  description: productDescription,
+  image: productImage,
+  brand_car: productBrand,
+  price_buy: parseFloat(productPriceBuy),
+  price_sell: parseFloat(productPriceSell),
+  stock: parseInt(productStock)
+};
 
 fetch("https://frenosa-backend.onrender.com/products", {
   method: "POST",
@@ -97,32 +97,7 @@ fetch("https://frenosa-backend.onrender.com/products", {
     console.error;
   });
 };
-fetch("localhost:3002/addToCart", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(CartProduct),
-})
-  .then((response) => response.json())
-  .then((data) => {
-    console.log("Success:", data);
-      setProducts((prevProducts) => [...prevProducts, data]);
-      setProductName("");
-      setProductAmount("");
-      setProductCollection("");
-      setProductAddress("");
-      setProductDni("");
-      setProductPlaca("");
-      setProductMarca("");
-      setProductDate("");
-      
-    
-  })
-  .catch((error) => {
-    console.error;
-  });
-};
+
 const handleEditProduct = (e) => {
   e.preventDefault();
   
@@ -168,6 +143,8 @@ const handleEditProduct = (e) => {
       });
   }
 };
+ 
+
 
 const handleDeleteProduct = (uuid) => {
   fetch(`https://frenosa-backend.onrender.com/delete/${uuid}`, {
@@ -191,17 +168,103 @@ const handleCartButtonClick = () => {
   setIsCartVisible(!isCartVisible);
 };
 
+/*Agregar carrito , STOCK*/ 
 const addToCart = (product) => {
   setCart((currentCart) => {
-    const productIndex = currentCart.findIndex((p) => p.uuid === product.uuid);
-    if (productIndex !== -1) {
-      return currentCart;
-    } else {
-      const productWithQuantity = { ...product, quantity: 1 };
-      return [...currentCart, productWithQuantity];
-    }
+    const productWithQuantity = { ...product, quantity: 1 };
+    const updatedProduct = { ...product, stock: product.stock - 1 };
+
+    
+    fetch(`https://frenosa-backend.onrender.com/update/${product.uuid}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedProduct),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        
+        setProducts((prevProducts) =>
+          prevProducts.map((p) => (p.uuid === product.uuid ? updatedProduct : p))
+        );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    return [...currentCart, productWithQuantity];
   });
 };
+/*Remueve el stock de delete */
+
+const removeFromCart = (index) => {
+  setCart((currentCart) => {
+    const productToRemove = currentCart[index];
+    const updatedProduct = { ...productToRemove, stock: productToRemove.stock + 0 };
+
+    
+    fetch(`https://frenosa-backend.onrender.com/update/${productToRemove.uuid}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedProduct),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        
+        setProducts((prevProducts) =>
+          prevProducts.map((p) => (p.uuid === productToRemove.uuid ? updatedProduct : p))
+        );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    return currentCart.filter((_, i) => i !== index);
+  });
+};
+
+
+
+/*cart error */
+const handlePayment = () => {
+  const saleData = {
+    customer: {
+      name: name,
+      address: address,
+      dni: dni,
+    },
+    vehicle: {
+      marca: marca,
+      placa: placa,
+    },
+    date: date,
+    cart: cart,
+  };
+
+  fetch("localhost3002:cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(saleData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Success:", data);
+      // Aquí puedes redirigir al usuario a la página de registro de ventas o mostrar un mensaje de confirmación
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+};
+
+
+
 
 const updateQuantity = (index, quantity) => {
   setCart((currentCart) => {
@@ -231,33 +294,7 @@ const handleExtraChargeChange = (index, field, value) => {
   setExtraCharges(newExtraCharges);
 };
 
-const handlePayment = async () => {
-  const data = {
-    customerName: name,
-    address,
-    vehicleBrand: marca,
-    vehiclePlate: placa,
-    dniOrRuc: dni,
-    date,
-    cartItems: cart,
-    total: cart.reduce((total, product) => total + product.price_sell * product.quantity, 0),
-  };
 
-  const encodedData = encodeURIComponent(JSON.stringify(data));
-  const url = `http://localhost:3002/cart?data=${encodedData}`;
-
-  try {
-    const response = await fetch(url);
-    if (response.ok) {
-      const responseData = await response.json();
-      console.log('Datos guardados en el backend:', responseData);
-    } else {
-      console.error('Error al guardar los datos:', response.status);
-    }
-  } catch (error) {
-    console.error('Error al enviar la solicitud:', error);
-  }
-};
 
 
 return (
@@ -429,14 +466,13 @@ return (
                           <td className="text-xs text-center border w-16 px-2 py-1">{product.price_sell}</td>                      
                           <td className="text-xs text-center border w-16 px-2 py-1">{product.price_sell * product.quantity}</td>
                           <td className="text-xs text-center border-transparent px-4 py-2 flex justify-around print-hide">
-                            <button
-                              onClick={() => {
-                                setCart((currentCart) => currentCart.filter((_, i) => i !== index));
-                              }}
-                              className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-full"
-                            >
-                              Eliminar
-                            </button>                            
+                          <button
+  onClick={() => removeFromCart(index)}
+  className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-full"
+>
+  Eliminar
+</button>
+                            
                           </td>
                           
                         </tr>
@@ -491,16 +527,14 @@ return (
                   >
                     Cerrar Carrito
                   </button>
+
                   <div className="flex gap-2">
-                  
-                  {/* CODIGO BOTON PAGAR */} 
-                  <button
-                    onClick={handlePayment}
-                    className="text-xs bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-                    onClick={() => CartProduct(product)}
->
-                    Pagar
-                  </button>
+    <button
+      onClick={handlePayment}
+      className="text-xs bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+    >
+      Pagar
+    </button>
                     <a
                       href="https://example.com"
                       target="_blank"
